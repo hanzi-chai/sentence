@@ -1,0 +1,3 @@
+[submodule "corpus/pixiv"]
+	path = corpus/pixiv
+	url = https://huggingface.co/datasets/wuliangfo/Chinese-Pixiv-Novel

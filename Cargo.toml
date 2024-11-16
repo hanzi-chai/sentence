@@ -1,0 +1,15 @@
+[package]
+name = "sentence"
+version = "0.1.0"
+edition = "2021"
+default-run = "sentence"
+
+[profile.benchmark]
+inherits = "release"
+debug = true
+
+[dependencies]
+rand = "0.8.5"
+regex = "1.11.1"
+serde_json = "1.0.132"
+zip = "2.2.0"
