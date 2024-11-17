@@ -1,3 +1,6 @@
 [submodule "corpus/pixiv"]
 	path = corpus/pixiv
 	url = https://huggingface.co/datasets/wuliangfo/Chinese-Pixiv-Novel
+[submodule "librime"]
+	path = librime
+	url = https://github.com/rime/librime.git

@@ -1,6 +1,6 @@
 schema:
-  schema_id: luna_pinyin
-  name: luna_pinyin
+  schema_id: test
+  name: test
 
 switches:
   - name: ascii_mode
@@ -26,5 +26,5 @@ speller:
   delimiter: " "
 
 translator:
-  dictionary: luna_pinyin
+  dictionary: test
   enable_user_dict: false
