@@ -22,7 +22,7 @@ engine:
     - uniquifier
 
 speller:
-  alphabet: zyxwvutsrqponmlkjihgfedcba
+  alphabet: "zyxwvutsrqponmlkjihgfedcba;,./_"
   delimiter: " "
 
 translator:

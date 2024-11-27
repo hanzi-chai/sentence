@@ -29,8 +29,14 @@ fn main() -> Result<(), Error> {
     let file_reader = BufReader::new(File::open(input)?);
     let mut filtered_writer = File::create(filtered)?;
     let mut file_writer = File::create(output)?;
+    let mut successful = 0;
+    let max_samples = 10000;
     for line in file_reader.lines() {
         let sentence = line?;
+        let chars: Vec<char> = sentence.chars().collect();
+        if chars.len() > 20 {
+            continue;
+        }
         let mut test_code = String::with_capacity(120);
         let mut success = true;
         for c in sentence.chars() {
@@ -49,8 +55,12 @@ fn main() -> Result<(), Error> {
         if !success {
             continue;
         }
+        successful += 1;
         writeln!(file_writer, "{} ", test_code)?;
         writeln!(filtered_writer, "{}", sentence)?;
+        if successful == max_samples {
+            break;
+        }
     }
     Ok(())
 }

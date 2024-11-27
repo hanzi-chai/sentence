@@ -1,53 +1,34 @@
 use regex::Regex;
-use std::fs::{File, OpenOptions};
-use std::io::{self, Read, Write};
+use std::fs::{self, File};
+use std::io::{Error, Read};
 use zip::read::ZipArchive;
 
-fn extract_chinese_sentences(file_path: &str, output_path: &str) -> io::Result<()> {
-    // Open the ZIP file
-    let file = File::open(file_path)?;
-    let mut archive = ZipArchive::new(file)?;
-
-    let mut output_file = OpenOptions::new()
-        .write(true)
-        .create(true)
-        .truncate(true)
-        .open(output_path)?;
-
-    // Regular expression to match Chinese sentences
+fn main() -> Result<(), Error> {
+    let mut archive = ZipArchive::new(File::open("corpus/pixiv/PixivNovel.zip")?)?;
     let chinese_re = Regex::new(r"[\u4e00-\u9fff]+").unwrap();
-
-    // Iterate over each file in the archive
+    let mut processed_files = 0;
+    let mut buffer = Vec::new();
+    let mut all_files = Vec::new();
+    println!("Processing files...");
     for i in 0..archive.len() {
         let mut file = archive.by_index(i)?;
-
-        // Check if file is not a directory
-        if file.is_file() && file.name().ends_with(".txt") && !file.name().ends_with("meta.txt") {
-            // Read the content of the file
-            let mut contents = String::new();
-            file.read_to_string(&mut contents)?;
-
-            // Find and collect all Chinese sentences
-            for cap in chinese_re.captures_iter(&contents) {
-                writeln!(output_file, "{}", cap[0].to_string())?;
-            }
+        if !file.is_file() || !file.name().ends_with(".txt") || file.name().ends_with("meta.txt") {
+            continue;
         }
-
-        if i % 1000 == 0 {
-            println!("Processed {} files", i);
+        let mut contents = String::new();
+        file.read_to_string(&mut contents)?;
+        for cap in chinese_re.captures_iter(&contents) {
+            buffer.push(cap[0].to_string());
+        }
+        processed_files += 1;
+        if processed_files % 1000 == 0 {
+            println!("Processed {} files", processed_files);
+            let name = format!("assets/corpus-{}.txt", processed_files / 1000);
+            fs::write(&name, buffer.join("\n"))?;
+            buffer.clear();
+            all_files.push(name);
         }
     }
+    fs::write("assets/index.txt", all_files.join("\n"))?;
     Ok(())
-}
-
-fn main() {
-    let zip_file_path = "corpus/pixiv/PixivNovel.zip"; // Replace with the path to your ZIP file
-    let output_path = "chinese_sentences.txt"; // Output file for Chinese sentences
-
-    match extract_chinese_sentences(zip_file_path, output_path) {
-        Ok(_) => {
-            println!("Chinese sentences successfully saved to {}", output_path);
-        }
-        Err(e) => eprintln!("Error reading ZIP archive: {}", e),
-    }
 }

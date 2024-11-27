@@ -18,3 +18,8 @@ use_preset_vocabulary: true
 
 $(cat "$table")
 EOF
+
+(
+    cd $librime_dir
+    ./rime_deployer --build 2> /dev/null
+)
